@@ -2,6 +2,7 @@ import { List } from "immutable";
 import * as React from "react";
 import { branch, compose, lifecycle, renderNothing, withHandlers, withState } from "recompose";
 import { Theme } from "./types/Theme";
+import { Style } from "./types/Style";
 
 export interface ThemeProps {
     channel: any;
@@ -20,16 +21,35 @@ interface ThemeHandler {
     onReceiveThemes: (theme: Theme[]) => void;
 }
 
-type BaseComponentProps = ThemeProps & ThemeState & ThemeHandler;
+interface ThemeStyles {
+    style: Style
+}
 
-const BaseComponent: React.SFC<BaseComponentProps> = ({ onSelectTheme, themes, theme }) => (
-    <div style={RowStyle}>
-        {themes.map((th, i) => {
-            const buttonStyle = th === theme ? SelectedButtonStyle : ButtonStyle;
-            return <div style={buttonStyle} key={i} onClick={() => onSelectTheme(th)}>{th.name}</div>;
-        }).toArray()}
-    </div>
-);
+
+
+type BaseComponentProps = ThemeProps & ThemeState & ThemeHandler & ThemeStyles;
+
+const BaseComponent: React.SFC<BaseComponentProps> = ({ onSelectTheme, themes, theme, style }) => {
+    const {
+        RowStyle: CustomRowStyle = {},
+        ButtonStyle: CustomButtonStyle = {},
+        SelectedButtonStyle: CustomSelectedButtonStyle = {}
+    } = style;
+    const ExtendStyle = {
+        RowStyle: { ...RowStyle, ...CustomRowStyle },
+        ButtonStyle: { ...ButtonStyle, ...CustomButtonStyle },
+        SelectedButtonStyle: { ...SelectedButtonStyle, ...CustomSelectedButtonStyle }
+    }
+
+    return (
+        <div style={ExtendStyle.RowStyle}>
+            {themes.map((th, i) => {
+                const buttonStyle = th === theme ? ExtendStyle.SelectedButtonStyle : ExtendStyle.ButtonStyle;
+                return <div style={buttonStyle} key={i} onClick={() => onSelectTheme(th)}>{th.name}</div>;
+            }).toArray()}
+        </div>
+    );
+};
 
 export const Themes = compose<BaseComponentProps, ThemeProps>(
     withState("theme", "setTheme", null),
