@@ -77,11 +77,12 @@ const RowStyle: React.CSSProperties = {
 };
 
 const ButtonStyle: React.CSSProperties = {
+    flex: 1,
     border: "1px solid #BBB",
     borderRadius: "6px",
     color: "#BBB",
     padding: "13px",
-    marginRight: "15px",
+    margin: "10px",
     cursor: "pointer",
     // tslint:disable-next-line:max-line-length
     fontFamily: "-apple-system, \".SFNSText-Regular\", \"San Francisco\", BlinkMacSystemFont, \"Segoe UI\", \"Roboto\", \"Oxygen\", \"Ubuntu\", \"Cantarell\", \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", \"Lucida Grande\", \"Arial\", sans-serif",
