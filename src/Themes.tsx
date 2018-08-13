@@ -1,7 +1,7 @@
-import {List} from "immutable";
+import { List } from "immutable";
 import * as React from "react";
-import {branch, compose, lifecycle, renderNothing, withHandlers, withState} from "recompose";
-import {Theme} from "./types/Theme";
+import { branch, compose, lifecycle, renderNothing, withHandlers, withState } from "recompose";
+import { Theme } from "./types/Theme";
 
 export interface ThemeProps {
     channel: any;
@@ -23,7 +23,7 @@ interface ThemeHandler {
 
 type BaseComponentProps = ThemeProps & ThemeState & ThemeHandler;
 
-const BaseComponent: React.SFC<BaseComponentProps> = ({onSelectTheme, themes, theme}) => (
+const BaseComponent: React.SFC<BaseComponentProps> = ({ onSelectTheme, themes, theme }) => (
     <div style={RowStyle}>
         {themes.map((th, i) => {
             const buttonStyle = th === theme ? SelectedButtonStyle : ButtonStyle;
@@ -36,12 +36,12 @@ export const Themes = compose<BaseComponentProps, ThemeProps>(
     withState("theme", "setTheme", null),
     withState("themes", "setThemes", List()),
     withHandlers<ThemeProps & ThemeState, ThemeHandler>({
-        onSelectTheme: ({channel, setTheme, api}) => (theme) => {
+        onSelectTheme: ({ channel, setTheme, api }) => (theme) => {
             setTheme(theme);
-            api.setQueryParams({theme: theme.name});
+            api.setQueryParams({ theme: theme.name });
             channel.emit("selectTheme", theme);
         },
-        onReceiveThemes: ({setTheme, setThemes, channel, api}) => (newThemes: Theme[]) => {
+        onReceiveThemes: ({ setTheme, setThemes, channel, api }) => (newThemes: Theme[]) => {
             const themes = List(newThemes);
             const themeName = api.getQueryParam("theme");
             setThemes(List(themes));
@@ -54,16 +54,16 @@ export const Themes = compose<BaseComponentProps, ThemeProps>(
     }),
     lifecycle<BaseComponentProps, BaseComponentProps>({
         componentDidMount() {
-            const {channel, onReceiveThemes} = this.props;
+            const { channel, onReceiveThemes } = this.props;
             channel.on("setThemes", onReceiveThemes);
         },
         componentWillUnmount() {
-            const {channel, onReceiveThemes} = this.props;
+            const { channel, onReceiveThemes } = this.props;
             channel.removeListener("setThemes", onReceiveThemes);
         },
     }),
     branch<BaseComponentProps>(
-        ({theme, active}) => !theme || !active,
+        ({ theme, active }) => !theme || !active,
         renderNothing,
     ),
 )(BaseComponent);
@@ -71,6 +71,9 @@ export const Themes = compose<BaseComponentProps, ThemeProps>(
 const RowStyle: React.CSSProperties = {
     margin: "10px",
     display: "flex",
+    flexWrap: "wrap",
+    height: "45px",
+    padding: "15px",
 };
 
 const ButtonStyle: React.CSSProperties = {
